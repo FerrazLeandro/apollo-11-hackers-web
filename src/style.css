@@ -27,7 +27,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 0;
+  padding: 30px 40px;
   border-bottom: 2px solid #00d4ff;
   margin-bottom: 30px;
   background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 212, 255, 0.1) 100%);
@@ -227,6 +227,87 @@ body {
   height: 500px;
   width: 100%;
   background: #1a1a2e;
+  position: relative;
+}
+
+/* Map Navigation Controls */
+.map-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-btn {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+  border: 2px solid #00d4ff;
+  border-radius: 50%;
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.control-btn:hover {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  color: #000000;
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.zoom-indicator {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+  border: 2px solid #00d4ff;
+  border-radius: 25px;
+  padding: 8px 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zoom-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  color: #ffffff;
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+
+.zoom-level {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow: 0 0 10px #00d4ff;
 }
 
 /* Data Panel NASA Style */
@@ -664,6 +745,31 @@ body {
     flex-direction: column;
     gap: 5px;
   }
+  
+  /* Map Controls Responsive */
+  .map-controls {
+    top: 10px;
+    right: 10px;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .zoom-indicator {
+    padding: 6px 12px;
+  }
+  
+  .zoom-label {
+    font-size: 0.7rem;
+  }
+  
+  .zoom-level {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -677,5 +783,264 @@ body {
   
   .card-value {
     font-size: 2rem;
+  }
+}
+
+/* ===== CHATBOT STYLES ===== */
+
+/* Chatbot Container */
+.chatbot-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.chatbot-container * {
+  pointer-events: auto;
+}
+
+/* Chatbot Button Animations */
+@keyframes chatbot-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.4);
+  }
+}
+
+@keyframes chatbot-glow {
+  0%, 100% { 
+    background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  }
+  50% { 
+    background: linear-gradient(135deg, #00b8e6 0%, #0088bb 100%);
+  }
+}
+
+/* Chatbot Window Animations */
+@keyframes chatbot-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes chatbot-slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Chatbot Message Animations */
+@keyframes message-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  animation: message-fade-in 0.3s ease-out;
+}
+
+/* Chatbot Typing Animation */
+@keyframes typing-wave {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.typing-dots span {
+  animation: typing-wave 1.4s ease-in-out infinite;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+.typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+/* Chatbot Button Hover Effects */
+.chat-button.nasa-style:hover .button-icon {
+  animation: chatbot-pulse 2s ease-in-out infinite;
+}
+
+.chat-button.nasa-style:hover .button-glow {
+  animation: chatbot-glow 3s ease-in-out infinite;
+}
+
+/* Chatbot Accessibility */
+.chat-button.nasa-style:focus {
+  outline: 3px solid #00d4ff;
+  outline-offset: 2px;
+}
+
+.chat-input.nasa-input:focus {
+  outline: 2px solid #00d4ff;
+  outline-offset: 1px;
+}
+
+/* Chatbot Loading States */
+.chat-button.nasa-style:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.send-button.nasa-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Chatbot Error States */
+.message-error .message-content {
+  border-color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  animation: alert-pulse 2s ease-in-out infinite;
+}
+
+/* Chatbot Success States */
+.message-success .message-content {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+/* Chatbot Info States */
+.message-info .message-content {
+  border-color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+}
+
+/* Chatbot Warning States */
+.message-warning .message-content {
+  border-color: #ffaa00;
+  background: rgba(255, 170, 0, 0.1);
+}
+
+/* Chatbot No Station States */
+.message-no-station .message-content {
+  border-color: #9c27b0;
+  background: rgba(156, 39, 176, 0.1);
+  animation: no-station-pulse 3s ease-in-out infinite;
+}
+
+@keyframes no-station-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(156, 39, 176, 0.6);
+  }
+}
+
+/* Chatbot Scrollbar Styling */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #00b8e6, #0088bb);
+}
+
+/* Chatbot Mobile Optimizations */
+@media (max-width: 480px) {
+  .chat-button.nasa-style {
+    min-width: 50px;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    justify-content: center;
+  }
+  
+  .button-text {
+    display: none;
+  }
+  
+  .button-icon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .icon-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Chatbot Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .chat-window.nasa-style {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(26, 26, 46, 0.98) 100%);
+  }
+  
+  .chat-input.nasa-input {
+    background: rgba(0, 212, 255, 0.15);
+    color: #ffffff;
+  }
+  
+  .chat-input.nasa-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* Chatbot High Contrast Mode */
+@media (prefers-contrast: high) {
+  .chat-button.nasa-style {
+    border-width: 3px;
+  }
+  
+  .chat-window.nasa-style {
+    border-width: 3px;
+  }
+  
+  .message-content {
+    border-width: 2px;
+  }
+}
+
+/* Chatbot Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .chat-button.nasa-style,
+  .chat-window.nasa-style,
+  .message,
+  .typing-dots span,
+  .button-glow {
+    animation: none;
+  }
+  
+  .chat-button.nasa-style:hover {
+    transform: none;
+  }
+  
+  .message:hover {
+    transform: none;
   }
 }

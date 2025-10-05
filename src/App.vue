@@ -42,22 +42,6 @@
             <h2>🌍 GLOBAL AIR QUALITY SURVEILLANCE</h2>
             <p>Click markers to access detailed atmospheric data</p>
           </div>
-          <div class="header-controls">
-            <div class="control-panel">
-              <button @click="loadData" class="nasa-btn primary" :disabled="loading">
-                <span class="btn-icon">🔄</span>
-                {{ loading ? 'SYNCING...' : 'SYNC DATA' }}
-              </button>
-              <button @click="centerMap" class="nasa-btn secondary">
-                <span class="btn-icon">🎯</span>
-                CENTER MAP
-              </button>
-              <button @click="loadSampleData" class="nasa-btn secondary">
-                <span class="btn-icon">🧪</span>
-                TEST DATA
-              </button>
-            </div>
-          </div>
         </div>
         <div id="map" class="nasa-map"></div>
       </div>
@@ -210,17 +194,6 @@
             </div>
           </div>
 
-          <!-- Mission Controls -->
-          <div class="mission-controls">
-            <button class="nasa-btn primary" @click="refreshStationData">
-              <span class="btn-icon">🔄</span>
-              SYNC DATA
-            </button>
-            <button class="nasa-btn secondary" @click="showStationOnMap">
-              <span class="btn-icon">🎯</span>
-              LOCATE STATION
-            </button>
-          </div>
         </div>
 
         <div v-else class="no-selection">
@@ -230,6 +203,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Chatbot Components -->
+    <ChatButton 
+      :is-open="isChatOpen" 
+      @toggle="toggleChat" 
+    />
+    <ChatWindow 
+      v-if="isChatOpen"
+      :is-open="isChatOpen"
+      :messages="chatMessages"
+      :is-typing="isTyping"
+      @close="closeChat"
+      @send-message="handleChatMessage"
+    />
   </div>
 </template>
 
@@ -238,15 +225,28 @@ import { onMounted, ref } from 'vue'
 import L from 'leaflet'
 import axios from 'axios'
 import { OPENAQ_CONFIG, getApiHeaders } from './config/openaq.js'
+import ChatButton from './components/ChatButton.vue'
+import ChatWindow from './components/ChatWindow.vue'
+import { useAirQualityChat } from './composables/useAirQualityChat.js'
 
 export default {
   name: 'App',
+  components: {
+    ChatButton,
+    ChatWindow
+  },
   setup() {
     const map = ref(null)
     const loading = ref(false)
     const error = ref('')
     const selectedStation = ref(null)
     const stations = ref([])
+
+    // Chatbot state
+    const isChatOpen = ref(false)
+    
+    // Initialize chatbot composable
+    const { messages: chatMessages, isTyping, sendMessage, initializeChat } = useAirQualityChat(stations, selectedStation)
 
     // Configurar ícones do Leaflet para Vue
     delete L.Icon.Default.prototype._getIconUrl
@@ -257,11 +257,28 @@ export default {
     })
 
     const initMap = () => {
-      map.value = L.map('map').setView([0, 0], 2)
+      map.value = L.map('map', {
+        minZoom: 3,
+        maxZoom: 18,
+        maxBounds: [
+          [-85, -180],
+          [85, 180]
+        ],
+        maxBoundsViscosity: 1.0,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        dragging: true
+      }).setView([20, 0], 3)
       
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors',
+        minZoom: 3,
+        maxZoom: 18
       }).addTo(map.value)
+      
+      console.log('Mapa Leaflet inicializado com sucesso')
     }
 
     const loadData = async () => {
@@ -453,7 +470,25 @@ export default {
         })
         
         if (group.getLayers().length > 0) {
-          map.value.fitBounds(group.getBounds().pad(0.1))
+          const bounds = group.getBounds()
+          const boundsSize = bounds.getNorthEast().distanceTo(bounds.getSouthWest())
+          
+          // Se os marcadores estão muito próximos, usar zoom mínimo de 5
+          // Se estão muito espalhados, usar zoom mínimo de 3
+          const minZoom = boundsSize < 1000000 ? 5 : 3
+          
+          map.value.fitBounds(bounds.pad(0.1), {
+            maxZoom: 8,
+            animate: true
+          })
+          
+          // Garantir que o zoom não seja menor que o mínimo definido
+          setTimeout(() => {
+            if (map.value.getZoom() < minZoom) {
+              map.value.setZoom(minZoom)
+            }
+          }, 500)
+          
           console.log('Mapa ajustado para mostrar todos os marcadores')
         }
       }
@@ -481,22 +516,13 @@ export default {
           so2: selectedStation.value.so2,
           co: selectedStation.value.co
         })
-        map.value.setView(selectedStation.value.coordinates, 15)
+        map.value.setView(selectedStation.value.coordinates, 12, {
+          animate: true,
+          duration: 1
+        })
       } else {
         console.log('Estação não encontrada!')
         console.log('IDs disponíveis:', stations.value.map(s => s.id))
-      }
-    }
-
-    const centerMap = () => {
-      if (stations.value.length > 0) {
-        const group = new L.featureGroup()
-        stations.value.forEach(station => {
-          if (station.coordinates[0] && station.coordinates[1]) {
-            group.addLayer(L.marker(station.coordinates))
-          }
-        })
-        map.value.fitBounds(group.getBounds().pad(0.1))
       }
     }
 
@@ -583,15 +609,6 @@ export default {
       return labels[status] || 'Desconhecida'
     }
 
-    const refreshStationData = () => {
-      loadData()
-    }
-
-    const showStationOnMap = () => {
-      if (selectedStation.value) {
-        map.value.setView(selectedStation.value.coordinates, 15)
-      }
-    }
 
     const getCurrentTime = () => {
       return new Date().toLocaleTimeString('pt-BR', { 
@@ -602,18 +619,6 @@ export default {
       })
     }
 
-    const loadSampleData = () => {
-      console.log('=== CARREGANDO DADOS DE TESTE ===')
-      loading.value = true
-      error.value = ''
-      
-      setTimeout(() => {
-        stations.value = getSampleData()
-        addMarkersToMap()
-        loading.value = false
-        console.log('Dados de teste carregados:', stations.value.length, 'estações')
-      }, 1000)
-    }
 
     const getSimulatedValue = (parameter) => {
       // Gerar valores simulados baseados no tipo de parâmetro
@@ -751,6 +756,22 @@ export default {
       ]
     }
 
+    // Chatbot functions
+    const toggleChat = () => {
+      isChatOpen.value = !isChatOpen.value
+      if (isChatOpen.value && chatMessages.value.length === 0) {
+        initializeChat()
+      }
+    }
+
+    const closeChat = () => {
+      isChatOpen.value = false
+    }
+
+    const handleChatMessage = (message) => {
+      sendMessage(message)
+    }
+
     // Expor função globalmente para uso nos popups
     window.selectStation = selectStation
 
@@ -766,7 +787,6 @@ export default {
       selectedStation,
       stations,
       loadData,
-      centerMap,
       selectStation,
       formatDate,
       formatTime,
@@ -775,10 +795,14 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
-      refreshStationData,
-      showStationOnMap,
       getCurrentTime,
-      loadSampleData
+      // Chatbot
+      isChatOpen,
+      chatMessages,
+      isTyping,
+      toggleChat,
+      closeChat,
+      handleChatMessage
     }
   }
 }
