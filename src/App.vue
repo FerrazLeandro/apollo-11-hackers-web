@@ -257,11 +257,28 @@ export default {
     })
 
     const initMap = () => {
-      map.value = L.map('map').setView([0, 0], 2)
+      map.value = L.map('map', {
+        minZoom: 3,
+        maxZoom: 18,
+        maxBounds: [
+          [-85, -180],
+          [85, 180]
+        ],
+        maxBoundsViscosity: 1.0,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        dragging: true
+      }).setView([20, 0], 3)
       
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors',
+        minZoom: 3,
+        maxZoom: 18
       }).addTo(map.value)
+      
+      console.log('Mapa Leaflet inicializado com sucesso')
     }
 
     const loadData = async () => {
@@ -508,7 +525,6 @@ export default {
         console.log('IDs disponíveis:', stations.value.map(s => s.id))
       }
     }
-
 
     const formatDate = (dateString) => {
       if (!dateString) return 'N/A'

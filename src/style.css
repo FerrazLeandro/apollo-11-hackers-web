@@ -227,6 +227,87 @@ body {
   height: 500px;
   width: 100%;
   background: #1a1a2e;
+  position: relative;
+}
+
+/* Map Navigation Controls */
+.map-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-btn {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+  border: 2px solid #00d4ff;
+  border-radius: 50%;
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.control-btn:hover {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  color: #000000;
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.zoom-indicator {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+  border: 2px solid #00d4ff;
+  border-radius: 25px;
+  padding: 8px 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zoom-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  color: #ffffff;
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+
+.zoom-level {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow: 0 0 10px #00d4ff;
 }
 
 /* Data Panel NASA Style */
@@ -663,6 +744,31 @@ body {
   .station-location {
     flex-direction: column;
     gap: 5px;
+  }
+  
+  /* Map Controls Responsive */
+  .map-controls {
+    top: 10px;
+    right: 10px;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .zoom-indicator {
+    padding: 6px 12px;
+  }
+  
+  .zoom-label {
+    font-size: 0.7rem;
+  }
+  
+  .zoom-level {
+    font-size: 0.9rem;
   }
 }
 
