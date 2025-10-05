@@ -29,10 +29,6 @@
           <span class="status-label">STATIONS ONLINE:</span>
           <span class="status-value">{{ stations.length }}</span>
         </div>
-        <div class="status-item">
-          <span class="status-label">LAST UPDATE:</span>
-          <span class="status-value">{{ getCurrentTime() }}</span>
-        </div>
       </div>
 
       <!-- Map Container NASA Style -->
@@ -610,16 +606,6 @@ export default {
     }
 
 
-    const getCurrentTime = () => {
-      return new Date().toLocaleTimeString('pt-BR', { 
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-    }
-
-
     const getSimulatedValue = (parameter) => {
       // Gerar valores simulados baseados no tipo de parâmetro
       const ranges = {
@@ -795,7 +781,6 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
-      getCurrentTime,
       // Chatbot
       isChatOpen,
       chatMessages,
