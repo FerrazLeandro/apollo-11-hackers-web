@@ -7,7 +7,7 @@ export const OPENAQ_CONFIG = {
   API_KEY: '38da3c0caa1e5bde8d3a588ecfca29f226cf5255ce2e60ad9318ecb47b4baeb4', // Sua chave de API
   
   // URLs da API v3 - usando proxy para resolver CORS
-  BASE_URL: isProduction ? '/api/openaq/v3' : '/api/openaq/v3', // Proxy configurado no Vite e Vercel
+  BASE_URL: isProduction ? '/api/openaq' : '/api/openaq', // Proxy configurado no Vite e Vercel
   ENDPOINTS: {
     LOCATIONS: '/locations',
     MEASUREMENTS: '/measurements'
