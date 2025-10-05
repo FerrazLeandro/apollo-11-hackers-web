@@ -203,6 +203,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Chatbot Components -->
+    <ChatButton 
+      :is-open="isChatOpen" 
+      @toggle="toggleChat" 
+    />
+    <ChatWindow 
+      v-if="isChatOpen"
+      :is-open="isChatOpen"
+      :messages="chatMessages"
+      :is-typing="isTyping"
+      @close="closeChat"
+      @send-message="handleChatMessage"
+    />
   </div>
 </template>
 
@@ -211,15 +225,28 @@ import { onMounted, ref } from 'vue'
 import L from 'leaflet'
 import axios from 'axios'
 import { OPENAQ_CONFIG, getApiHeaders } from './config/openaq.js'
+import ChatButton from './components/ChatButton.vue'
+import ChatWindow from './components/ChatWindow.vue'
+import { useAirQualityChat } from './composables/useAirQualityChat.js'
 
 export default {
   name: 'App',
+  components: {
+    ChatButton,
+    ChatWindow
+  },
   setup() {
     const map = ref(null)
     const loading = ref(false)
     const error = ref('')
     const selectedStation = ref(null)
     const stations = ref([])
+
+    // Chatbot state
+    const isChatOpen = ref(false)
+    
+    // Initialize chatbot composable
+    const { messages: chatMessages, isTyping, sendMessage, initializeChat } = useAirQualityChat(stations, selectedStation)
 
     // Configurar ícones do Leaflet para Vue
     delete L.Icon.Default.prototype._getIconUrl
@@ -426,7 +453,25 @@ export default {
         })
         
         if (group.getLayers().length > 0) {
-          map.value.fitBounds(group.getBounds().pad(0.1))
+          const bounds = group.getBounds()
+          const boundsSize = bounds.getNorthEast().distanceTo(bounds.getSouthWest())
+          
+          // Se os marcadores estão muito próximos, usar zoom mínimo de 5
+          // Se estão muito espalhados, usar zoom mínimo de 3
+          const minZoom = boundsSize < 1000000 ? 5 : 3
+          
+          map.value.fitBounds(bounds.pad(0.1), {
+            maxZoom: 8,
+            animate: true
+          })
+          
+          // Garantir que o zoom não seja menor que o mínimo definido
+          setTimeout(() => {
+            if (map.value.getZoom() < minZoom) {
+              map.value.setZoom(minZoom)
+            }
+          }, 500)
+          
           console.log('Mapa ajustado para mostrar todos os marcadores')
         }
       }
@@ -454,7 +499,10 @@ export default {
           so2: selectedStation.value.so2,
           co: selectedStation.value.co
         })
-        map.value.setView(selectedStation.value.coordinates, 15)
+        map.value.setView(selectedStation.value.coordinates, 12, {
+          animate: true,
+          duration: 1
+        })
       } else {
         console.log('Estação não encontrada!')
         console.log('IDs disponíveis:', stations.value.map(s => s.id))
@@ -692,6 +740,22 @@ export default {
       ]
     }
 
+    // Chatbot functions
+    const toggleChat = () => {
+      isChatOpen.value = !isChatOpen.value
+      if (isChatOpen.value && chatMessages.value.length === 0) {
+        initializeChat()
+      }
+    }
+
+    const closeChat = () => {
+      isChatOpen.value = false
+    }
+
+    const handleChatMessage = (message) => {
+      sendMessage(message)
+    }
+
     // Expor função globalmente para uso nos popups
     window.selectStation = selectStation
 
@@ -715,7 +779,14 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
-      getCurrentTime
+      getCurrentTime,
+      // Chatbot
+      isChatOpen,
+      chatMessages,
+      isTyping,
+      toggleChat,
+      closeChat,
+      handleChatMessage
     }
   }
 }
