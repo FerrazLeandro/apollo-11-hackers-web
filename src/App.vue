@@ -42,22 +42,6 @@
             <h2>🌍 GLOBAL AIR QUALITY SURVEILLANCE</h2>
             <p>Click markers to access detailed atmospheric data</p>
           </div>
-          <div class="header-controls">
-            <div class="control-panel">
-              <button @click="loadData" class="nasa-btn primary" :disabled="loading">
-                <span class="btn-icon">🔄</span>
-                {{ loading ? 'SYNCING...' : 'SYNC DATA' }}
-              </button>
-              <button @click="centerMap" class="nasa-btn secondary">
-                <span class="btn-icon">🎯</span>
-                CENTER MAP
-              </button>
-              <button @click="loadSampleData" class="nasa-btn secondary">
-                <span class="btn-icon">🧪</span>
-                TEST DATA
-              </button>
-            </div>
-          </div>
         </div>
         <div id="map" class="nasa-map"></div>
       </div>
@@ -210,17 +194,6 @@
             </div>
           </div>
 
-          <!-- Mission Controls -->
-          <div class="mission-controls">
-            <button class="nasa-btn primary" @click="refreshStationData">
-              <span class="btn-icon">🔄</span>
-              SYNC DATA
-            </button>
-            <button class="nasa-btn secondary" @click="showStationOnMap">
-              <span class="btn-icon">🎯</span>
-              LOCATE STATION
-            </button>
-          </div>
         </div>
 
         <div v-else class="no-selection">
@@ -488,17 +461,6 @@ export default {
       }
     }
 
-    const centerMap = () => {
-      if (stations.value.length > 0) {
-        const group = new L.featureGroup()
-        stations.value.forEach(station => {
-          if (station.coordinates[0] && station.coordinates[1]) {
-            group.addLayer(L.marker(station.coordinates))
-          }
-        })
-        map.value.fitBounds(group.getBounds().pad(0.1))
-      }
-    }
 
     const formatDate = (dateString) => {
       if (!dateString) return 'N/A'
@@ -583,15 +545,6 @@ export default {
       return labels[status] || 'Desconhecida'
     }
 
-    const refreshStationData = () => {
-      loadData()
-    }
-
-    const showStationOnMap = () => {
-      if (selectedStation.value) {
-        map.value.setView(selectedStation.value.coordinates, 15)
-      }
-    }
 
     const getCurrentTime = () => {
       return new Date().toLocaleTimeString('pt-BR', { 
@@ -602,18 +555,6 @@ export default {
       })
     }
 
-    const loadSampleData = () => {
-      console.log('=== CARREGANDO DADOS DE TESTE ===')
-      loading.value = true
-      error.value = ''
-      
-      setTimeout(() => {
-        stations.value = getSampleData()
-        addMarkersToMap()
-        loading.value = false
-        console.log('Dados de teste carregados:', stations.value.length, 'estações')
-      }, 1000)
-    }
 
     const getSimulatedValue = (parameter) => {
       // Gerar valores simulados baseados no tipo de parâmetro
@@ -766,7 +707,6 @@ export default {
       selectedStation,
       stations,
       loadData,
-      centerMap,
       selectStation,
       formatDate,
       formatTime,
@@ -775,10 +715,7 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
-      refreshStationData,
-      showStationOnMap,
-      getCurrentTime,
-      loadSampleData
+      getCurrentTime
     }
   }
 }
