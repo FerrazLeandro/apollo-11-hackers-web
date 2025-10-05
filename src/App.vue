@@ -230,6 +230,20 @@
         </div>
       </div>
     </div>
+
+    <!-- Chatbot Components -->
+    <ChatButton 
+      :is-open="isChatOpen" 
+      @toggle="toggleChat" 
+    />
+    <ChatWindow 
+      v-if="isChatOpen"
+      :is-open="isChatOpen"
+      :messages="chatMessages"
+      :is-typing="isTyping"
+      @close="closeChat"
+      @send-message="handleChatMessage"
+    />
   </div>
 </template>
 
@@ -238,15 +252,28 @@ import { onMounted, ref } from 'vue'
 import L from 'leaflet'
 import axios from 'axios'
 import { OPENAQ_CONFIG, getApiHeaders } from './config/openaq.js'
+import ChatButton from './components/ChatButton.vue'
+import ChatWindow from './components/ChatWindow.vue'
+import { useAirQualityChat } from './composables/useAirQualityChat.js'
 
 export default {
   name: 'App',
+  components: {
+    ChatButton,
+    ChatWindow
+  },
   setup() {
     const map = ref(null)
     const loading = ref(false)
     const error = ref('')
     const selectedStation = ref(null)
     const stations = ref([])
+
+    // Chatbot state
+    const isChatOpen = ref(false)
+    
+    // Initialize chatbot composable
+    const { messages: chatMessages, isTyping, sendMessage, initializeChat } = useAirQualityChat(stations, selectedStation)
 
     // Configurar ícones do Leaflet para Vue
     delete L.Icon.Default.prototype._getIconUrl
@@ -751,6 +778,22 @@ export default {
       ]
     }
 
+    // Chatbot functions
+    const toggleChat = () => {
+      isChatOpen.value = !isChatOpen.value
+      if (isChatOpen.value && chatMessages.value.length === 0) {
+        initializeChat()
+      }
+    }
+
+    const closeChat = () => {
+      isChatOpen.value = false
+    }
+
+    const handleChatMessage = (message) => {
+      sendMessage(message)
+    }
+
     // Expor função globalmente para uso nos popups
     window.selectStation = selectStation
 
@@ -778,7 +821,14 @@ export default {
       refreshStationData,
       showStationOnMap,
       getCurrentTime,
-      loadSampleData
+      loadSampleData,
+      // Chatbot
+      isChatOpen,
+      chatMessages,
+      isTyping,
+      toggleChat,
+      closeChat,
+      handleChatMessage
     }
   }
 }
