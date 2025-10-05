@@ -17,20 +17,24 @@ export default async function handler(req, res) {
     // Construir URL da API OpenAQ
     const apiUrl = `https://api.openaq.org/v3/${apiPath}`
     
+    console.log('Fazendo requisição para:', apiUrl)
+    
     // Fazer requisição para a API OpenAQ
     const response = await fetch(apiUrl, {
       method: req.method,
       headers: {
         'X-API-Key': '38da3c0caa1e5bde8d3a588ecfca29f226cf5255ce2e60ad9318ecb47b4baeb4',
-        'Content-Type': 'application/json',
-        ...req.headers
-      },
-      body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined
+        'Content-Type': 'application/json'
+      }
     })
+
+    if (!response.ok) {
+      throw new Error(`API responded with status: ${response.status}`)
+    }
 
     const data = await response.json()
     
-    res.status(response.status).json(data)
+    res.status(200).json(data)
   } catch (error) {
     console.error('Erro no proxy da API:', error)
     res.status(500).json({ 
