@@ -829,6 +829,22 @@ body {
   background: rgba(255, 170, 0, 0.1);
 }
 
+/* Chatbot No Station States */
+.message-no-station .message-content {
+  border-color: #9c27b0;
+  background: rgba(156, 39, 176, 0.1);
+  animation: no-station-pulse 3s ease-in-out infinite;
+}
+
+@keyframes no-station-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(156, 39, 176, 0.6);
+  }
+}
+
 /* Chatbot Scrollbar Styling */
 .chat-messages::-webkit-scrollbar {
   width: 8px;

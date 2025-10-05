@@ -59,6 +59,7 @@ Tente novamente em instantes para obter dados atmosféricos.
 ## 💬 Comandos Disponíveis
 
 ### Perguntas Principais
+- **"Como selecionar estação?"** - Guia passo a passo para seleção
 - **"Como está a qualidade do ar?"** - Status geral da estação selecionada
 - **"E o nível de PM2.5?"** - Dados específicos de partículas finas
 - **"A qualidade está boa para exercícios?"** - Recomendação para atividades físicas
@@ -66,7 +67,45 @@ Tente novamente em instantes para obter dados atmosféricos.
 
 ### Exemplos de Interação
 
-#### Usuário: "Como está a qualidade do ar?"
+#### Usuário: "Como selecionar estação?"
+**IA Apollo 11 Hackers**:
+```
+🎯 **GUIA DE SELEÇÃO DE ESTAÇÃO**
+
+Para obter dados atmosféricos específicos:
+
+1. **📍 Localize os marcadores azuis** no mapa global
+2. **🖱️ Clique em qualquer marcador** para selecionar a estação
+3. **⏳ Aguarde os dados carregarem** na interface principal
+4. **💬 Faça sua pergunta** sobre qualidade do ar
+
+📍 **Estações disponíveis**: 5 estações online
+
+💡 **Dicas**:
+• Use o botão "CENTER MAP" para ver todas as estações
+• Marcadores azuis = estações ativas
+• Dados aparecem no painel lateral após seleção
+
+🚀 Pronto para monitorar a atmosfera!
+```
+
+#### Usuário: "Como está a qualidade do ar?" (sem estação selecionada)
+**IA Apollo 11 Hackers**:
+```
+🌌 ATENÇÃO! Nenhuma estação de monitoramento selecionada.
+
+🎯 Para obter dados atmosféricos, você precisa:
+
+1. **Clique em uma estação** no mapa global
+2. **Aguarde os dados carregarem** na interface
+3. **Faça sua pergunta** novamente
+
+📍 Estações disponíveis: 5 estações online
+
+💡 Dica: Use o botão "CENTER MAP" para ver todas as estações disponíveis!
+```
+
+#### Usuário: "Como está a qualidade do ar?" (com estação selecionada)
 **IA Apollo 11 Hackers**: 
 ```
 🚀✨ Excelente! A qualidade do ar em São Paulo - Centro está BOA!

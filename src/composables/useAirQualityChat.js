@@ -190,8 +190,35 @@ export function useAirQualityChat(stations, selectedStation) {
 
     let response = null
 
-    // Processar diferentes tipos de pergunta
-    if (lowerMessage.includes('qualidade') || lowerMessage.includes('ar')) {
+    // Verificar se há estação selecionada para perguntas sobre dados
+    const needsStationData = lowerMessage.includes('qualidade') || 
+                           lowerMessage.includes('ar') || 
+                           lowerMessage.includes('pm2.5') || 
+                           lowerMessage.includes('pm25') || 
+                           lowerMessage.includes('pm10') || 
+                           lowerMessage.includes('o3') || 
+                           lowerMessage.includes('no2') || 
+                           lowerMessage.includes('so2') || 
+                           lowerMessage.includes('co') || 
+                           lowerMessage.includes('exercício') || 
+                           lowerMessage.includes('atividade')
+
+    if (needsStationData && !selectedStation.value) {
+      response = {
+        text: `🌌 ATENÇÃO! Nenhuma estação de monitoramento selecionada.
+
+🎯 Para obter dados atmosféricos, você precisa:
+
+1. **Clique em uma estação** no mapa global
+2. **Aguarde os dados carregarem** na interface
+3. **Faça sua pergunta** novamente
+
+📍 Estações disponíveis: ${stations.value.length} estações online
+
+💡 Dica: Use o botão "CENTER MAP" para ver todas as estações disponíveis!`,
+        type: "no-station"
+      }
+    } else if (lowerMessage.includes('qualidade') || lowerMessage.includes('ar')) {
       const airQuality = getCurrentAirQuality()
       response = generateAirQualityResponse(airQuality)
     } else if (lowerMessage.includes('pm2.5') || lowerMessage.includes('pm25')) {
@@ -244,10 +271,32 @@ ${pm25Score === 0 ? 'Excelente! Partículas finas em níveis seguros.' :
           type: "no-data"
         }
       }
+    } else if (lowerMessage.includes('como selecionar') || lowerMessage.includes('selecionar estação')) {
+      response = {
+        text: `🎯 **GUIA DE SELEÇÃO DE ESTAÇÃO**
+
+Para obter dados atmosféricos específicos:
+
+1. **📍 Localize os marcadores azuis** no mapa global
+2. **🖱️ Clique em qualquer marcador** para selecionar a estação
+3. **⏳ Aguarde os dados carregarem** na interface principal
+4. **💬 Faça sua pergunta** sobre qualidade do ar
+
+📍 **Estações disponíveis**: ${stations.value.length} estações online
+
+💡 **Dicas**:
+• Use o botão "CENTER MAP" para ver todas as estações
+• Marcadores azuis = estações ativas
+• Dados aparecem no painel lateral após seleção
+
+🚀 Pronto para monitorar a atmosfera!`,
+        type: "help"
+      }
     } else if (lowerMessage.includes('ajuda') || lowerMessage.includes('help')) {
       response = {
         text: `🚀 IA Apollo 11 Hackers - Comandos Disponíveis:
 
+• "Como selecionar estação?" - Guia de seleção
 • "Como está a qualidade do ar?" - Status geral
 • "E o nível de PM2.5?" - Dados específicos de PM2.5
 • "A qualidade está boa para exercícios?" - Recomendação para atividades
@@ -299,9 +348,13 @@ Tente perguntar sobre:
 Sou sua IA de monitoramento atmosférico. Posso te ajudar com:
 
 • Status da qualidade do ar
-• Dados específicos de poluentes
+• Dados específicos de poluentes  
 • Recomendações para atividades
 • Alertas de segurança
+
+🎯 **IMPORTANTE**: Para obter dados específicos, primeiro selecione uma estação no mapa clicando nos marcadores azuis.
+
+📍 Estações disponíveis: ${stations.value.length} estações online
 
 Como posso assistir sua missão hoje?`,
       sender: 'system',

@@ -108,6 +108,7 @@ export default {
     const messagesContainer = ref(null)
 
     const quickActions = [
+      { text: 'Como selecionar estação?' },
       { text: 'Qualidade do ar?' },
       { text: 'PM2.5 atual?' },
       { text: 'Bom para exercícios?' }
