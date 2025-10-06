@@ -618,11 +618,11 @@ export default {
     const getAirQualityLabel = (parameter, value) => {
       const status = getAirQualityStatus(parameter, value)
       const labels = {
-        good: 'Boa',
-        moderate: 'Moderada',
-        unhealthy: 'Insalubre',
-        hazardous: 'Perigosa',
-        unknown: 'Desconhecida'
+        good: 'Good',
+        moderate: 'Moderate',
+        unhealthy: 'Unhealthy',
+        hazardous: 'Hazardous',
+        unknown: 'Unknown'
       }
       return labels[status] || 'Unknown'
     }
