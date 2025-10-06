@@ -1,4 +1,3 @@
-// Teste da API route
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
@@ -10,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   res.status(200).json({ 
-    message: 'API route funcionando!',
+    message: 'API route working!',
     timestamp: new Date().toISOString(),
     method: req.method,
     query: req.query

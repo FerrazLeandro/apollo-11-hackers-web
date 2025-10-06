@@ -1,110 +1,110 @@
-# Deploy na Vercel - Apollo 11 Hackers
+# Vercel Deploy - Apollo 11 Hackers
 
-## Configuração Automática
+## Automatic Configuration
 
-O projeto está configurado para funcionar tanto em desenvolvimento quanto em produção:
+The project is configured to work in both development and production:
 
-### 🏠 **Desenvolvimento Local**
-- **Proxy**: Vite proxy em `/api/openaq/v3`
+### 🏠 **Local Development**
+- **Proxy**: Vite proxy at `/api/openaq/v3`
 - **Target**: `https://api.openaq.org`
-- **Headers**: Adicionados automaticamente pelo proxy
-- **Comando**: `npm run dev`
+- **Headers**: Added automatically by proxy
+- **Command**: `npm run dev`
 
-### 🚀 **Produção (Vercel)**
+### 🚀 **Production (Vercel)**
 - **API Route**: `/api/openaq/locations`
 - **Target**: `https://api.openaq.org/v3/locations`
-- **Headers**: Adicionados pela API route
-- **Deploy**: Automático via Git
+- **Headers**: Added by API route
+- **Deploy**: Automatic via Git
 
-### 1. API Routes (Produção)
-- `api/openaq/locations.js` - Proxy específico para locations da API OpenAQ
-- `api/test.js` - Endpoint de teste para verificar se a API está funcionando
-- Configuração automática de CORS
-- Headers de autenticação incluídos
+### 1. API Routes (Production)
+- `api/openaq/locations.js` - Specific proxy for OpenAQ locations API
+- `api/test.js` - Test endpoint to verify API is working
+- Automatic CORS configuration
+- Authentication headers included
 
-### 2. Estrutura de Arquivos
+### 2. File Structure
 ```
-# Desenvolvimento
-vite.config.js          <- Proxy do Vite
-src/config/openaq.js    <- Configuração da API
+# Development
+vite.config.js          <- Vite proxy
+src/config/openaq.js    <- API configuration
 
-# Produção
+# Production
 api/
   openaq/
-    locations.js  <- API route específica para locations
-  test.js        <- Endpoint de teste
+    locations.js  <- Specific API route for locations
+  test.js        <- Test endpoint
 ```
 
-### 3. Detecção Automática de Ambiente
+### 3. Automatic Environment Detection
 ```javascript
 const isProduction = import.meta.env.PROD
 const BASE_URL = isProduction ? '/api/openaq' : '/api/openaq/v3'
 ```
 
-## Como Fazer Deploy
+## How to Deploy
 
-1. Conecte seu repositório à Vercel
-2. O deploy será automático
-3. A API funcionará em `/api/openaq/locations`
+1. Connect your repository to Vercel
+2. Deploy will be automatic
+3. API will work at `/api/openaq/locations`
 
-## Teste da API
+## API Testing
 
-### Desenvolvimento Local
+### Local Development
 ```bash
 npm run dev
-# Acesse: http://localhost:3001
+# Access: http://localhost:3001
 # API: http://localhost:3001/api/openaq/v3/locations
 ```
 
-### Produção
-Após o deploy, teste os endpoints:
+### Production
+After deploy, test the endpoints:
 
-1. **Teste básico**: `https://seu-site.vercel.app/api/test`
-2. **API OpenAQ**: `https://seu-site.vercel.app/api/openaq/locations?limit=10`
+1. **Basic test**: `https://your-site.vercel.app/api/test`
+2. **OpenAQ API**: `https://your-site.vercel.app/api/openaq/locations?limit=10`
 
-## Estrutura da API
+## API Structure
 
-### Desenvolvimento
+### Development
 ```
 /api/openaq/v3/locations -> https://api.openaq.org/v3/locations
 ```
 
-### Produção
+### Production
 ```
 /api/openaq/locations -> https://api.openaq.org/v3/locations
-/api/test -> Endpoint de teste
+/api/test -> Test endpoint
 ```
 
 ## Troubleshooting
 
-Se ainda houver erro 404:
+If you still get 404 error:
 
-### Desenvolvimento Local
-1. Verifique se o `vite.config.js` está correto
-2. Reinicie o servidor: `npm run dev`
-3. Verifique o console do navegador
+### Local Development
+1. Check if `vite.config.js` is correct
+2. Restart server: `npm run dev`
+3. Check browser console
 
-### Produção
-1. **Teste o endpoint básico primeiro**:
+### Production
+1. **Test basic endpoint first**:
    ```
-   https://seu-site.vercel.app/api/test
-   ```
-
-2. **Se o teste funcionar, teste a API OpenAQ**:
-   ```
-   https://seu-site.vercel.app/api/openaq/locations?limit=10
+   https://your-site.vercel.app/api/test
    ```
 
-3. **Verifique os logs da Vercel** para erros específicos
+2. **If test works, test OpenAQ API**:
+   ```
+   https://your-site.vercel.app/api/openaq/locations?limit=10
+   ```
 
-4. **Verifique se os arquivos estão na pasta correta**:
+3. **Check Vercel logs** for specific errors
+
+4. **Check if files are in correct folder**:
    - `api/openaq/locations.js`
    - `api/test.js`
 
-## Logs Úteis
+## Useful Logs
 
-A API route inclui logs para debug:
-- Console.log da URL sendo chamada
-- Status da resposta da API OpenAQ
-- Número de locations recebidas
-- Erros detalhados em caso de falha
+The API route includes logs for debugging:
+- Console.log of URL being called
+- OpenAQ API response status
+- Number of locations received
+- Detailed errors in case of failure

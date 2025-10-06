@@ -1,50 +1,50 @@
-# Configuração de Ambiente - Apollo 11 Hackers
+# Environment Configuration - Apollo 11 Hackers
 
-## Desenvolvimento Local (npm run dev)
+## Local Development (npm run dev)
 
-- **Proxy**: Vite proxy em `/api/openaq/v3`
+- **Proxy**: Vite proxy at `/api/openaq/v3`
 - **Target**: `https://api.openaq.org`
-- **Headers**: Adicionados automaticamente pelo proxy
-- **URL final**: `http://localhost:3001/api/openaq/v3/locations`
+- **Headers**: Added automatically by proxy
+- **Final URL**: `http://localhost:3001/api/openaq/v3/locations`
 
-## Produção (Vercel Deploy)
+## Production (Vercel Deploy)
 
 - **API Route**: `/api/openaq/locations`
 - **Target**: `https://api.openaq.org/v3/locations`
-- **Headers**: Adicionados pela API route
-- **URL final**: `https://seu-site.vercel.app/api/openaq/locations`
+- **Headers**: Added by API route
+- **Final URL**: `https://your-site.vercel.app/api/openaq/locations`
 
-## Detecção Automática
+## Automatic Detection
 
-O código detecta automaticamente o ambiente:
+The code automatically detects the environment:
 
 ```javascript
 const isProduction = import.meta.env.PROD
 const BASE_URL = isProduction ? '/api/openaq' : '/api/openaq/v3'
 ```
 
-## Estrutura de Arquivos
+## File Structure
 
 ```
-# Desenvolvimento
-vite.config.js          <- Proxy do Vite
-src/config/openaq.js    <- Configuração da API
+# Development
+vite.config.js          <- Vite proxy
+src/config/openaq.js    <- API configuration
 
-# Produção
-api/openaq/locations.js <- API route da Vercel
-api/test.js            <- Endpoint de teste
+# Production
+api/openaq/locations.js <- Vercel API route
+api/test.js            <- Test endpoint
 ```
 
-## Teste
+## Testing
 
 ### Local
 ```bash
 npm run dev
-# Acesse: http://localhost:3001
+# Access: http://localhost:3001
 ```
 
-### Produção
+### Production
 ```bash
-# Deploy automático na Vercel
-# Acesse: https://seu-site.vercel.app
+# Automatic deploy on Vercel
+# Access: https://your-site.vercel.app
 ```

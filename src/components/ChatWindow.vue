@@ -8,8 +8,8 @@
             <span class="icon-text">IA</span>
           </div>
           <div class="header-text">
-            <h3>IA Apollo 11 Hackers</h3>
-            <p>Sistema de Monitoramento Atmosférico</p>
+            <h3>AI Apollo 11 Hackers</h3>
+            <p>Atmospheric Monitoring System</p>
           </div>
         </div>
         <button @click="closeChat" class="close-button nasa-btn">
@@ -43,7 +43,7 @@
                 <span></span>
                 <span></span>
               </div>
-              <span class="typing-text">IA Apollo 11 Hackers está processando...</span>
+              <span class="typing-text">AI Apollo 11 Hackers is processing...</span>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
           <input 
             v-model="inputMessage"
             @keypress.enter="handleSendMessage"
-            placeholder="Digite sua pergunta sobre a qualidade do ar..."
+            placeholder="Type your question about air quality..."
             class="chat-input nasa-input"
             :disabled="isTyping"
           />
@@ -108,10 +108,10 @@ export default {
     const messagesContainer = ref(null)
 
     const quickActions = [
-      { text: 'Como selecionar estação?' },
-      { text: 'Qualidade do ar?' },
-      { text: 'PM2.5 atual?' },
-      { text: 'Bom para exercícios?' }
+      { text: 'How to select station?' },
+      { text: 'Air quality?' },
+      { text: 'Current PM2.5?' },
+      { text: 'Good for exercise?' }
     ]
 
     const closeChat = () => {
@@ -130,18 +130,16 @@ export default {
     }
 
     const formatMessage = (text) => {
-      // Converter quebras de linha para <br>
       return text.replace(/\n/g, '<br>')
     }
 
     const formatTime = (timestamp) => {
-      return new Date(timestamp).toLocaleTimeString('pt-BR', {
+      return new Date(timestamp).toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit'
       })
     }
 
-    // Auto scroll para baixo quando novas mensagens chegam
     const scrollToBottom = () => {
       nextTick(() => {
         if (messagesContainer.value) {
