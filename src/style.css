@@ -15,8 +15,8 @@ body {
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 20px;
   position: relative;
   z-index: 2;
@@ -27,12 +27,35 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 40px;
-  border-bottom: 2px solid #00d4ff;
+  padding: 40px 60px;
   margin-bottom: 30px;
-  background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 212, 255, 0.1) 100%);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(26, 26, 46, 0.6) 50%, rgba(0, 212, 255, 0.08) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  width: 100%;
+  box-shadow: 
+    0 8px 32px rgba(0, 212, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nasa-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .nasa-logo {
@@ -110,12 +133,30 @@ body {
 .mission-status {
   display: flex;
   justify-content: space-around;
-  background: rgba(0, 212, 255, 0.1);
-  border: 1px solid #00d4ff;
-  border-radius: 10px;
-  padding: 20px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.06) 0%, rgba(26, 26, 46, 0.4) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 20px;
+  padding: 30px;
   margin-bottom: 30px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
+  width: 100%;
+  box-shadow: 
+    0 6px 24px rgba(0, 212, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(0, 212, 255, 0.08);
+  position: relative;
+}
+
+.mission-status::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.03) 50%, transparent 70%);
+  border-radius: 20px;
+  pointer-events: none;
 }
 
 .status-item {
@@ -146,12 +187,30 @@ body {
 
 /* Map Container NASA Style */
 .map-container.nasa-style {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
-  border: 2px solid #00d4ff;
-  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 26, 46, 0.7) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 24px;
   overflow: hidden;
   margin-bottom: 30px;
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 212, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+  width: 100%;
+  position: relative;
+}
+
+.map-container.nasa-style::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.02) 0%, transparent 50%, rgba(0, 212, 255, 0.02) 100%);
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .map-header {
@@ -186,45 +245,72 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
-  border: 2px solid #00d4ff;
-  border-radius: 25px;
-  background: transparent;
+  padding: 14px 24px;
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 26, 46, 0.3) 100%);
   color: #00d4ff;
   font-family: 'Orbitron', monospace;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 16px rgba(0, 212, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nasa-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.nasa-btn:hover::before {
+  left: 100%;
 }
 
 .nasa-btn:hover {
-  background: #00d4ff;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(0, 153, 204, 0.8) 100%);
   color: #000000;
-  box-shadow: 0 0 20px #00d4ff;
-  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(0, 212, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(0, 212, 255, 0.8);
 }
 
 .nasa-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
   transform: none;
+  background: rgba(26, 26, 46, 0.2);
 }
 
 .nasa-btn.primary {
-  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.8) 0%, rgba(0, 153, 204, 0.7) 100%);
   color: #000000;
+  border-color: rgba(0, 212, 255, 0.6);
 }
 
 .nasa-btn.secondary {
-  background: transparent;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 26, 46, 0.3) 100%);
   color: #00d4ff;
+  border-color: rgba(0, 212, 255, 0.3);
 }
 
 .nasa-map {
-  height: 500px;
+  height: 70vh;
   width: 100%;
   background: #1a1a2e;
   position: relative;
@@ -312,11 +398,29 @@ body {
 
 /* Data Panel NASA Style */
 .data-panel.nasa-style {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
-  border: 2px solid #00d4ff;
-  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(26, 26, 46, 0.7) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 212, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+  width: 100%;
+  position: relative;
+}
+
+.data-panel.nasa-style::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.02) 0%, transparent 50%, rgba(0, 212, 255, 0.02) 100%);
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Error Panel */
@@ -532,14 +636,18 @@ body {
 }
 
 .reading-card.nasa-card {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
-  border: 2px solid #00d4ff;
-  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(26, 26, 46, 0.6) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
   padding: 25px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 
+    0 8px 24px rgba(0, 212, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 212, 255, 0.08);
 }
 
 .reading-card.nasa-card::before {
@@ -549,8 +657,8 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.15), transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reading-card.nasa-card:hover::before {
@@ -558,8 +666,12 @@ body {
 }
 
 .reading-card.nasa-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 16px 40px rgba(0, 212, 255, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(0, 212, 255, 0.2);
+  border-color: rgba(0, 212, 255, 0.5);
 }
 
 .card-header {

@@ -195,7 +195,7 @@
 
     <!-- Chatbot Components -->
     <ChatButton 
-      :is-open="isChatOpen" 
+      :is-open="isChatOpen"
       @toggle="toggleChat" 
     />
     <ChatWindow 
@@ -206,6 +206,11 @@
       @close="closeChat"
       @send-message="handleChatMessage"
     />
+    
+    <!-- AI Disclosure -->
+    <div style="position: fixed; bottom: 5px; left: 5px; font-size: 0.6rem; opacity: 0.5; color: #666;">
+      AI-powered atmospheric analysis
+    </div>
   </div>
 </template>
 
@@ -233,6 +238,7 @@ export default {
 
     const isChatOpen = ref(false)
     
+    // AI chatbot composable
     const { messages: chatMessages, isTyping, sendMessage, initializeChat } = useAirQualityChat(stations, selectedStation)
 
     delete L.Icon.Default.prototype._getIconUrl
@@ -265,6 +271,11 @@ export default {
       }).addTo(map.value)
       
       console.log('Mapa Leaflet inicializado com sucesso')
+      
+      map.value.on('popupclose', () => {
+        console.log('Popup fechado - resetando mapa para posição inicial')
+        map.value.setView([20, 0], 3)
+      })
     }
 
     const loadData = async () => {
@@ -405,11 +416,6 @@ export default {
                 ${station.pm10 ? `<p style="margin: 5px 0;"><strong>PM10:</strong> ${formatValue(station.pm10)} μg/m³</p>` : ''}
                 ${station.o3 ? `<p style="margin: 5px 0;"><strong>O₃:</strong> ${formatValue(station.o3)} μg/m³</p>` : ''}
                 ${station.no2 ? `<p style="margin: 5px 0;"><strong>NO₂:</strong> ${formatValue(station.no2)} μg/m³</p>` : ''}
-                <button onclick="window.selectStation('${station.id}')" 
-                        style="background: #00d4ff; color: white; border: none; padding: 8px 16px; 
-                               border-radius: 5px; cursor: pointer; margin-top: 10px;">
-                  View Details
-                </button>
               </div>
             `
             
@@ -545,6 +551,7 @@ export default {
       return `${diffDays} days ago`
     }
 
+    // AI-powered air quality classification
     const getAirQualityStatus = (parameter, value) => {
       if (!value || typeof value !== 'number') return 'unknown'
       

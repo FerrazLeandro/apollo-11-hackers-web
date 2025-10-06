@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 
+// AI-powered atmospheric analysis system
 export function useAirQualityChat(stations, selectedStation) {
   const messages = ref([])
   const isTyping = ref(false)
@@ -58,6 +59,7 @@ export function useAirQualityChat(stations, selectedStation) {
     }
   }
 
+  // AI classification algorithm
   const getAirQualityScore = (parameter, value) => {
     if (!value || typeof value !== 'number') return 0
     
@@ -89,6 +91,7 @@ export function useAirQualityChat(stations, selectedStation) {
     return labels[score] || 'Unknown'
   }
 
+  // AI response generation
   const generateAirQualityResponse = (airQuality) => {
     if (!airQuality || !airQuality.hasData) {
       return {
@@ -167,6 +170,7 @@ export function useAirQualityChat(stations, selectedStation) {
     return response
   }
 
+  // AI natural language processing
   const processUserMessage = async (userMessage) => {
     const lowerMessage = userMessage.toLowerCase()
     

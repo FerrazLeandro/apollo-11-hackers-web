@@ -10,6 +10,7 @@
           <div class="header-text">
             <h3>AI Apollo 11 Hackers</h3>
             <p>Atmospheric Monitoring System</p>
+            <small style="opacity: 0.6; font-size: 0.7rem;">AI-powered analysis</small>
           </div>
         </div>
         <button @click="closeChat" class="close-button nasa-btn">
