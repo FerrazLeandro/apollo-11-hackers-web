@@ -1156,3 +1156,234 @@ body {
     transform: none;
   }
 }
+
+/* Air Quality Summary Section */
+.summary-section {
+  margin-top: 30px;
+}
+
+.summary-section h3 {
+  font-family: 'Orbitron', monospace;
+  color: #00d4ff;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 10px #00d4ff;
+  letter-spacing: 2px;
+}
+
+.summary-content {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(26, 26, 46, 0.8) 100%);
+  border: 2px solid #00d4ff;
+  border-radius: 20px;
+  padding: 25px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.summary-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.summary-icon .icon-text {
+  font-size: 2rem;
+}
+
+.summary-title h4 {
+  font-family: 'Orbitron', monospace;
+  color: #00d4ff;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  text-shadow: 0 0 10px #00d4ff;
+}
+
+.summary-title p {
+  font-family: 'Exo 2', sans-serif;
+  color: #ffffff;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.overall-status {
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.overall-status.good {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: #00ff88;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.overall-status.moderate {
+  background: rgba(255, 170, 0, 0.1);
+  border-color: #ffaa00;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.2);
+}
+
+.overall-status.unhealthy {
+  background: rgba(255, 68, 68, 0.1);
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.2);
+}
+
+.overall-status.hazardous {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: #ff0000;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  animation: alert-pulse 2s ease-in-out infinite;
+}
+
+.overall-status.unknown {
+  background: rgba(136, 136, 136, 0.1);
+  border-color: #888888;
+  box-shadow: 0 0 20px rgba(136, 136, 136, 0.2);
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.status-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.status-text {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.status-description {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: #00d4ff;
+  transform: translateY(-2px);
+}
+
+.detail-label {
+  font-family: 'Orbitron', monospace;
+  color: #00d4ff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-shadow: 0 0 5px #00d4ff;
+}
+
+.detail-value {
+  font-family: 'Exo 2', sans-serif;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+@keyframes alert-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+/* Summary Section Responsive */
+@media (max-width: 768px) {
+  .summary-content {
+    padding: 20px;
+  }
+  
+  .summary-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .summary-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .summary-icon .icon-text {
+    font-size: 1.5rem;
+  }
+  
+  .status-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .status-icon {
+    font-size: 2rem;
+  }
+  
+  .status-text {
+    font-size: 1.2rem;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .detail-value {
+    text-align: center;
+  }
+}

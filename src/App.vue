@@ -181,6 +181,47 @@
                 </div>
               </div>
             </div>
+
+            <!-- Air Quality Summary Section -->
+            <div class="summary-section">
+              <h3>ATMOSPHERIC ANALYSIS SUMMARY</h3>
+              <div class="summary-content nasa-card">
+                <div class="summary-header">
+                  <div class="summary-icon">
+                    <span class="icon-text">🌍</span>
+                  </div>
+                  <div class="summary-title">
+                    <h4>STATION QUALITY ASSESSMENT</h4>
+                    <p>{{ formatDataValue(selectedStation.name) }} - {{ formatDataValue(selectedStation.city) }}, {{ formatDataValue(selectedStation.country) }}</p>
+                  </div>
+                </div>
+                
+                <div class="summary-body">
+                  <div class="overall-status" :class="getOverallAirQualityStatus()">
+                    <div class="status-header">
+                      <span class="status-icon">{{ getOverallAirQualityIcon() }}</span>
+                      <span class="status-text">{{ getOverallAirQualityLabel() }}</span>
+                    </div>
+                    <div class="status-description">{{ getOverallAirQualityDescription() }}</div>
+                  </div>
+                  
+                  <div class="summary-details">
+                    <div class="detail-item">
+                      <span class="detail-label">MEASURED PARAMETERS:</span>
+                      <span class="detail-value">{{ getMeasuredParameters(selectedStation) }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">DATA FRESHNESS:</span>
+                      <span class="detail-value">{{ getTimeAgo(selectedStation.lastUpdated) }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">RECOMMENDATION:</span>
+                      <span class="detail-value">{{ getActivityRecommendation() }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -586,6 +627,79 @@ export default {
       return labels[status] || 'Unknown'
     }
 
+    // Overall air quality assessment functions
+    const getOverallAirQualityStatus = () => {
+      if (!selectedStation.value) return 'unknown'
+      
+      const measurements = [
+        { param: 'pm25', value: selectedStation.value.pm25 },
+        { param: 'pm10', value: selectedStation.value.pm10 },
+        { param: 'o3', value: selectedStation.value.o3 },
+        { param: 'no2', value: selectedStation.value.no2 },
+        { param: 'so2', value: selectedStation.value.so2 },
+        { param: 'co', value: selectedStation.value.co }
+      ]
+      
+      const validMeasurements = measurements.filter(m => m.value !== null && m.value !== undefined)
+      if (validMeasurements.length === 0) return 'unknown'
+      
+      const worstStatus = validMeasurements.reduce((worst, measurement) => {
+        const status = getAirQualityStatus(measurement.param, measurement.value)
+        const statusOrder = { good: 0, moderate: 1, unhealthy: 2, hazardous: 3, unknown: -1 }
+        return statusOrder[status] > statusOrder[worst] ? status : worst
+      }, 'good')
+      
+      return worstStatus
+    }
+
+    const getOverallAirQualityIcon = () => {
+      const status = getOverallAirQualityStatus()
+      const icons = {
+        good: '🚀✨',
+        moderate: '⚠️',
+        unhealthy: '🚨',
+        hazardous: '🚨🚨',
+        unknown: '🌌'
+      }
+      return icons[status] || '🌌'
+    }
+
+    const getOverallAirQualityLabel = () => {
+      const status = getOverallAirQualityStatus()
+      const labels = {
+        good: 'EXCELLENT',
+        moderate: 'MODERATE',
+        unhealthy: 'UNHEALTHY',
+        hazardous: 'HAZARDOUS',
+        unknown: 'UNKNOWN'
+      }
+      return labels[status] || 'UNKNOWN'
+    }
+
+    const getOverallAirQualityDescription = () => {
+      const status = getOverallAirQualityStatus()
+      const descriptions = {
+        good: 'Atmospheric conditions are optimal for all outdoor activities. No health concerns detected.',
+        moderate: 'Air quality is acceptable for most people. Sensitive individuals should take precautions.',
+        unhealthy: 'Air quality poses health risks. Avoid outdoor activities and consider protective measures.',
+        hazardous: 'DANGER! Air quality is extremely hazardous. Stay indoors and use air purifiers.',
+        unknown: 'Unable to determine air quality status. Data may be unavailable or incomplete.'
+      }
+      return descriptions[status] || 'Unable to assess air quality.'
+    }
+
+    const getActivityRecommendation = () => {
+      const status = getOverallAirQualityStatus()
+      const recommendations = {
+        good: 'All outdoor activities recommended',
+        moderate: 'Light outdoor activities acceptable',
+        unhealthy: 'Avoid outdoor activities',
+        hazardous: 'STAY INDOORS - Use air purifiers',
+        unknown: 'Unable to provide recommendation'
+      }
+      return recommendations[status] || 'Unable to provide recommendation'
+    }
+
 
     const getSimulatedValue = (parameter) => {
       const ranges = {
@@ -760,6 +874,11 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
+      getOverallAirQualityStatus,
+      getOverallAirQualityIcon,
+      getOverallAirQualityLabel,
+      getOverallAirQualityDescription,
+      getActivityRecommendation,
       isChatOpen,
       chatMessages,
       isTyping,
