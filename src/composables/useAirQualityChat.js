@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
 
+// AI-powered atmospheric analysis system
 export function useAirQualityChat(stations, selectedStation) {
   const messages = ref([])
   const isTyping = ref(false)
 
-  // Função para obter dados da estação atual
   const getCurrentAirQuality = () => {
     if (!selectedStation.value) {
       return null
@@ -20,7 +20,6 @@ export function useAirQualityChat(stations, selectedStation) {
       co: station.co
     }
 
-    // Calcular qualidade geral baseada no pior parâmetro
     const qualityScores = []
     
     if (measurements.pm25) {
@@ -60,7 +59,7 @@ export function useAirQualityChat(stations, selectedStation) {
     }
   }
 
-  // Função para calcular score de qualidade (0-3: boa, moderada, ruim, perigosa)
+  // AI classification algorithm
   const getAirQualityScore = (parameter, value) => {
     if (!value || typeof value !== 'number') return 0
     
@@ -84,25 +83,25 @@ export function useAirQualityChat(stations, selectedStation) {
 
   const getQualityLabel = (score) => {
     const labels = {
-      0: 'Boa',
-      1: 'Moderada', 
-      2: 'Ruim',
-      3: 'Perigosa'
+      0: 'Good',
+      1: 'Moderate', 
+      2: 'Unhealthy',
+      3: 'Hazardous'
     }
-    return labels[score] || 'Desconhecida'
+    return labels[score] || 'Unknown'
   }
 
-  // Função para gerar resposta baseada na qualidade do ar
+  // AI response generation
   const generateAirQualityResponse = (airQuality) => {
     if (!airQuality || !airQuality.hasData) {
       return {
-        text: "🌌 Não consegui captar sinais do satélite agora. Tente novamente em instantes para obter dados atmosféricos.",
+        text: "🌌 Unable to capture satellite signals now. Try again in a moment to get atmospheric data.",
         type: "no-data"
       }
     }
 
     const { overallQuality, measurements, station } = airQuality
-    const stationName = station.name || 'Estação Desconhecida'
+    const stationName = station.name || 'Unknown Station'
     const location = `${station.city || 'N/A'}, ${station.country || 'N/A'}`
 
     let response = {
@@ -113,69 +112,68 @@ export function useAirQualityChat(stations, selectedStation) {
     }
 
     switch (overallQuality) {
-      case 'Boa':
-        response.text = `🚀✨ Excelente! A qualidade do ar em ${stationName} está BOA! 
+      case 'Good':
+        response.text = `🚀✨ Excellent! Air quality in ${stationName} is GOOD! 
         
-📊 Dados atmosféricos:
+📊 Atmospheric data:
 • PM2.5: ${measurements.pm25 ? measurements.pm25.toFixed(2) + ' μg/m³' : 'N/A'}
 • PM10: ${measurements.pm10 ? measurements.pm10.toFixed(2) + ' μg/m³' : 'N/A'}
 • O₃: ${measurements.o3 ? measurements.o3.toFixed(2) + ' μg/m³' : 'N/A'}
 
-🌍 Condições ideais para atividades ao ar livre!`
+🌍 Ideal conditions for outdoor activities!`
         break
 
-      case 'Moderada':
-        response.text = `⚠️ Atenção! A qualidade do ar em ${stationName} está MODERADA.
+      case 'Moderate':
+        response.text = `⚠️ Attention! Air quality in ${stationName} is MODERATE.
 
-📊 Dados atmosféricos:
+📊 Atmospheric data:
 • PM2.5: ${measurements.pm25 ? measurements.pm25.toFixed(2) + ' μg/m³' : 'N/A'}
 • PM10: ${measurements.pm10 ? measurements.pm10.toFixed(2) + ' μg/m³' : 'N/A'}
 • O₃: ${measurements.o3 ? measurements.o3.toFixed(2) + ' μg/m³' : 'N/A'}
 
-💡 Recomendação: Pessoas sensíveis devem evitar atividades prolongadas ao ar livre.`
+💡 Recommendation: Sensitive people should avoid prolonged outdoor activities.`
         break
 
-      case 'Ruim':
-        response.text = `🚨 ALERTA! A qualidade do ar em ${stationName} está RUIM!
+      case 'Unhealthy':
+        response.text = `🚨 ALERT! Air quality in ${stationName} is UNHEALTHY!
 
-📊 Dados atmosféricos:
+📊 Atmospheric data:
 • PM2.5: ${measurements.pm25 ? measurements.pm25.toFixed(2) + ' μg/m³' : 'N/A'}
 • PM10: ${measurements.pm10 ? measurements.pm10.toFixed(2) + ' μg/m³' : 'N/A'}
 • O₃: ${measurements.o3 ? measurements.o3.toFixed(2) + ' μg/m³' : 'N/A'}
 
-🛡️ PROTEÇÃO NECESSÁRIA:
-• Evite atividades ao ar livre
-• Use máscara N95 se necessário
-• Mantenha janelas fechadas`
+🛡️ PROTECTION NEEDED:
+• Avoid outdoor activities
+• Use N95 mask if necessary
+• Keep windows closed`
         break
 
-      case 'Perigosa':
-        response.text = `🚨🚨 EMERGÊNCIA ATMOSFÉRICA! Qualidade do ar PERIGOSA em ${stationName}!
+      case 'Hazardous':
+        response.text = `🚨🚨 ATMOSPHERIC EMERGENCY! HAZARDOUS air quality in ${stationName}!
 
-📊 Dados críticos:
+📊 Critical data:
 • PM2.5: ${measurements.pm25 ? measurements.pm25.toFixed(2) + ' μg/m³' : 'N/A'}
 • PM10: ${measurements.pm10 ? measurements.pm10.toFixed(2) + ' μg/m³' : 'N/A'}
 • O₃: ${measurements.o3 ? measurements.o3.toFixed(2) + ' μg/m³' : 'N/A'}
 
-🛡️ AÇÕES IMEDIATAS:
-• PERMANEÇA EM CASA
-• Use purificador de ar
-• Máscara N95 obrigatória
-• Evite exercícios físicos`
+🛡️ IMMEDIATE ACTIONS:
+• STAY INDOORS
+• Use air purifier
+• N95 mask mandatory
+• Avoid physical exercise`
         break
 
       default:
-        response.text = `🌌 Dados atmosféricos indisponíveis no momento. Sistema Apollo 11 Hackers tentando reconectar...`
+        response.text = `🌌 Atmospheric data unavailable at the moment. Apollo 11 Hackers system trying to reconnect...`
     }
 
     return response
   }
 
-  // Função para processar mensagem do usuário
+  // AI natural language processing
   const processUserMessage = async (userMessage) => {
     const lowerMessage = userMessage.toLowerCase()
     
-    // Adicionar mensagem do usuário
     messages.value.push({
       id: Date.now(),
       text: userMessage,
@@ -185,14 +183,12 @@ export function useAirQualityChat(stations, selectedStation) {
 
     isTyping.value = true
 
-    // Simular delay de processamento
     await new Promise(resolve => setTimeout(resolve, 1500))
 
     let response = null
 
-    // Verificar se há estação selecionada para perguntas sobre dados
-    const needsStationData = lowerMessage.includes('qualidade') || 
-                           lowerMessage.includes('ar') || 
+    const needsStationData = lowerMessage.includes('quality') || 
+                           lowerMessage.includes('air') || 
                            lowerMessage.includes('pm2.5') || 
                            lowerMessage.includes('pm25') || 
                            lowerMessage.includes('pm10') || 
@@ -200,25 +196,25 @@ export function useAirQualityChat(stations, selectedStation) {
                            lowerMessage.includes('no2') || 
                            lowerMessage.includes('so2') || 
                            lowerMessage.includes('co') || 
-                           lowerMessage.includes('exercício') || 
-                           lowerMessage.includes('atividade')
+                           lowerMessage.includes('exercise') || 
+                           lowerMessage.includes('activity')
 
     if (needsStationData && !selectedStation.value) {
       response = {
-        text: `🌌 ATENÇÃO! Nenhuma estação de monitoramento selecionada.
+        text: `🌌 ATTENTION! No monitoring station selected.
 
-🎯 Para obter dados atmosféricos, você precisa:
+🎯 To get atmospheric data, you need to:
 
-1. **Clique em uma estação** no mapa global
-2. **Aguarde os dados carregarem** na interface
-3. **Faça sua pergunta** novamente
+1. **Click on a station** on the global map
+2. **Wait for data to load** in the interface
+3. **Ask your question** again
 
-📍 Estações disponíveis: ${stations.value.length} estações online
+📍 Available stations: ${stations.value.length} stations online
 
-💡 Dica: Use o botão "CENTER MAP" para ver todas as estações disponíveis!`,
+💡 Tip: Use the "CENTER MAP" button to see all available stations!`,
         type: "no-station"
       }
-    } else if (lowerMessage.includes('qualidade') || lowerMessage.includes('ar')) {
+    } else if (lowerMessage.includes('quality') || lowerMessage.includes('air')) {
       const airQuality = getCurrentAirQuality()
       response = generateAirQualityResponse(airQuality)
     } else if (lowerMessage.includes('pm2.5') || lowerMessage.includes('pm25')) {
@@ -229,96 +225,95 @@ export function useAirQualityChat(stations, selectedStation) {
         const pm25Label = getQualityLabel(pm25Score)
         
         response = {
-          text: `📊 PM2.5 atual: ${pm25Value.toFixed(2)} μg/m³
+          text: `📊 Current PM2.5: ${pm25Value.toFixed(2)} μg/m³
           
 Status: ${pm25Label} ${pm25Score === 0 ? '🚀✨' : pm25Score === 1 ? '⚠️' : pm25Score === 2 ? '🚨' : '🚨🚨'}
 
-${pm25Score === 0 ? 'Excelente! Partículas finas em níveis seguros.' : 
-  pm25Score === 1 ? 'Atenção: Pessoas sensíveis devem ter cuidado.' :
-  pm25Score === 2 ? 'Perigoso: Evite atividades ao ar livre.' :
-  'CRÍTICO: PERMANEÇA EM CASA!'}`,
+${pm25Score === 0 ? 'Excellent! Fine particles at safe levels.' : 
+  pm25Score === 1 ? 'Attention: Sensitive people should be careful.' :
+  pm25Score === 2 ? 'Dangerous: Avoid outdoor activities.' :
+  'CRITICAL: STAY INDOORS!'}`,
           type: pm25Label.toLowerCase()
         }
       } else {
         response = {
-          text: "🌌 Dados de PM2.5 não disponíveis no momento. Sistema Apollo 11 Hackers tentando reconectar...",
+          text: "🌌 PM2.5 data unavailable at the moment. Apollo 11 Hackers system trying to reconnect...",
           type: "no-data"
         }
       }
-    } else if (lowerMessage.includes('exercício') || lowerMessage.includes('atividade')) {
+    } else if (lowerMessage.includes('exercise') || lowerMessage.includes('activity')) {
       const airQuality = getCurrentAirQuality()
       if (airQuality && airQuality.hasData) {
         const { overallQuality } = airQuality
-        if (overallQuality === 'Boa') {
+        if (overallQuality === 'Good') {
           response = {
-            text: "🚀✨ PERFEITO! Condições ideais para exercícios ao ar livre! A qualidade do ar está excelente.",
+            text: "🚀✨ PERFECT! Ideal conditions for outdoor exercise! Air quality is excellent.",
             type: "good"
           }
-        } else if (overallQuality === 'Moderada') {
+        } else if (overallQuality === 'Moderate') {
           response = {
-            text: "⚠️ ATENÇÃO! Qualidade moderada. Exercícios leves são aceitáveis, mas evite atividades intensas.",
+            text: "⚠️ ATTENTION! Moderate quality. Light exercise is acceptable, but avoid intense activities.",
             type: "moderate"
           }
         } else {
           response = {
-            text: "🚨 NÃO RECOMENDADO! Qualidade do ar inadequada para exercícios. Opte por atividades indoor.",
+            text: "🚨 NOT RECOMMENDED! Air quality inadequate for exercise. Opt for indoor activities.",
             type: "unhealthy"
           }
         }
       } else {
         response = {
-          text: "🌌 Não consigo avaliar as condições para exercícios. Dados atmosféricos indisponíveis.",
+          text: "🌌 Cannot evaluate conditions for exercise. Atmospheric data unavailable.",
           type: "no-data"
         }
       }
-    } else if (lowerMessage.includes('como selecionar') || lowerMessage.includes('selecionar estação')) {
+    } else if (lowerMessage.includes('how to select') || lowerMessage.includes('select station')) {
       response = {
-        text: `🎯 **GUIA DE SELEÇÃO DE ESTAÇÃO**
+        text: `🎯 **STATION SELECTION GUIDE**
 
-Para obter dados atmosféricos específicos:
+To get specific atmospheric data:
 
-1. **📍 Localize os marcadores azuis** no mapa global
-2. **🖱️ Clique em qualquer marcador** para selecionar a estação
-3. **⏳ Aguarde os dados carregarem** na interface principal
-4. **💬 Faça sua pergunta** sobre qualidade do ar
+1. **📍 Locate blue markers** on the global map
+2. **🖱️ Click any marker** to select the station
+3. **⏳ Wait for data to load** in the main interface
+4. **💬 Ask your question** about air quality
 
-📍 **Estações disponíveis**: ${stations.value.length} estações online
+📍 **Available stations**: ${stations.value.length} stations online
 
-💡 **Dicas**:
-• Use o botão "CENTER MAP" para ver todas as estações
-• Marcadores azuis = estações ativas
-• Dados aparecem no painel lateral após seleção
+💡 **Tips**:
+• Use the "CENTER MAP" button to see all stations
+• Blue markers = active stations
+• Data appears in the side panel after selection
 
-🚀 Pronto para monitorar a atmosfera!`,
+🚀 Ready to monitor the atmosphere!`,
         type: "help"
       }
-    } else if (lowerMessage.includes('ajuda') || lowerMessage.includes('help')) {
+    } else if (lowerMessage.includes('help')) {
       response = {
-        text: `🚀 IA Apollo 11 Hackers - Comandos Disponíveis:
+        text: `🚀 AI Apollo 11 Hackers - Available Commands:
 
-• "Como selecionar estação?" - Guia de seleção
-• "Como está a qualidade do ar?" - Status geral
-• "E o nível de PM2.5?" - Dados específicos de PM2.5
-• "A qualidade está boa para exercícios?" - Recomendação para atividades
-• "Ajuda" - Esta lista de comandos
+• "How to select station?" - Selection guide
+• "How is the air quality?" - General status
+• "What's the PM2.5 level?" - Specific PM2.5 data
+• "Is the quality good for exercise?" - Activity recommendations
+• "Help" - This command list
 
-🌍 Sistema de monitoramento atmosférico em tempo real!`,
+🌍 Real-time atmospheric monitoring system!`,
         type: "help"
       }
     } else {
       response = {
-        text: `🌌 Comando não reconhecido pelo sistema Apollo 11 Hackers. 
+        text: `🌌 Command not recognized by Apollo 11 Hackers system. 
 
-Tente perguntar sobre:
-• Qualidade do ar atual
-• Níveis de PM2.5
-• Condições para exercícios
-• Digite "ajuda" para ver todos os comandos`,
+Try asking about:
+• Current air quality
+• PM2.5 levels
+• Exercise conditions
+• Type "help" to see all commands`,
         type: "unknown"
       }
     }
 
-    // Adicionar resposta do sistema
     messages.value.push({
       id: Date.now() + 1,
       text: response.text,
@@ -332,31 +327,29 @@ Tente perguntar sobre:
     isTyping.value = false
   }
 
-  // Função para enviar mensagem
   const sendMessage = (message) => {
     if (message.trim()) {
       processUserMessage(message)
     }
   }
 
-  // Mensagem inicial
   const initializeChat = () => {
     messages.value = [{
       id: 1,
-      text: `🚀 Bem-vindo ao Sistema Apollo 11 Hackers!
+      text: `🚀 Welcome to Apollo 11 Hackers System!
 
-Sou sua IA de monitoramento atmosférico. Posso te ajudar com:
+I'm your atmospheric monitoring AI. I can help you with:
 
-• Status da qualidade do ar
-• Dados específicos de poluentes  
-• Recomendações para atividades
-• Alertas de segurança
+• Air quality status
+• Specific pollutant data  
+• Activity recommendations
+• Safety alerts
 
-🎯 **IMPORTANTE**: Para obter dados específicos, primeiro selecione uma estação no mapa clicando nos marcadores azuis.
+🎯 **IMPORTANT**: To get specific data, first select a station on the map by clicking the blue markers.
 
-📍 Estações disponíveis: ${stations.value.length} estações online
+📍 Available stations: ${stations.value.length} stations online
 
-Como posso assistir sua missão hoje?`,
+How can I assist your mission today?`,
       sender: 'system',
       timestamp: new Date(),
       type: 'welcome'

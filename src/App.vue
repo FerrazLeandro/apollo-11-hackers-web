@@ -1,7 +1,6 @@
 <template>
   <div class="app">
     <div class="container">
-      <!-- Header NASA Style -->
       <header class="nasa-header">
         <div class="nasa-logo">
           <div class="logo-icon">🚀</div>
@@ -19,7 +18,6 @@
         </div>
       </header>
 
-      <!-- Mission Status -->
       <div class="mission-status">
         <div class="status-item">
           <span class="status-label">MISSION STATUS:</span>
@@ -29,13 +27,8 @@
           <span class="status-label">STATIONS ONLINE:</span>
           <span class="status-value">{{ stations.length }}</span>
         </div>
-        <div class="status-item">
-          <span class="status-label">LAST UPDATE:</span>
-          <span class="status-value">{{ getCurrentTime() }}</span>
-        </div>
       </div>
 
-      <!-- Map Container NASA Style -->
       <div class="map-container nasa-style">
         <div class="map-header">
           <div class="header-content">
@@ -46,14 +39,13 @@
         <div id="map" class="nasa-map"></div>
       </div>
 
-      <!-- Data Panel NASA Style -->
       <div class="data-panel nasa-style">
         <div v-if="error" class="error-panel">
           <div class="error-icon">⚠️</div>
           <div class="error-content">
             <h3>SYSTEM ERROR</h3>
             <p>{{ error }}</p>
-            <div v-if="error.includes('autenticação')" class="error-solution">
+            <div v-if="error.includes('authentication')" class="error-solution">
               <strong>SOLUTION:</strong><br>
               1. Access <a href="https://explore.openaq.org/register" target="_blank">https://explore.openaq.org/register</a><br>
               2. Register for free<br>
@@ -72,7 +64,6 @@
         </div>
 
         <div v-else-if="selectedStation" class="station-details nasa-style">
-          <!-- Station Header NASA Style -->
           <div class="station-header nasa-header">
             <div class="station-info">
               <h2>{{ formatDataValue(selectedStation.name) }}</h2>
@@ -87,7 +78,6 @@
             </div>
           </div>
 
-          <!-- Station Data NASA Style -->
           <div class="station-data">
             <div class="data-section">
               <h3>MISSION PARAMETERS</h3>
@@ -115,7 +105,6 @@
               </div>
             </div>
 
-            <!-- Current Readings NASA Style -->
             <div class="readings-section">
               <h3>ATMOSPHERIC READINGS</h3>
               <div class="readings-grid nasa-grid">
@@ -206,7 +195,7 @@
 
     <!-- Chatbot Components -->
     <ChatButton 
-      :is-open="isChatOpen" 
+      :is-open="isChatOpen"
       @toggle="toggleChat" 
     />
     <ChatWindow 
@@ -217,6 +206,11 @@
       @close="closeChat"
       @send-message="handleChatMessage"
     />
+    
+    <!-- AI Disclosure -->
+    <div style="position: fixed; bottom: 5px; left: 5px; font-size: 0.6rem; opacity: 0.5; color: #666;">
+      AI-powered atmospheric analysis
+    </div>
   </div>
 </template>
 
@@ -242,13 +236,11 @@ export default {
     const selectedStation = ref(null)
     const stations = ref([])
 
-    // Chatbot state
     const isChatOpen = ref(false)
     
-    // Initialize chatbot composable
+    // AI chatbot composable
     const { messages: chatMessages, isTyping, sendMessage, initializeChat } = useAirQualityChat(stations, selectedStation)
 
-    // Configurar ícones do Leaflet para Vue
     delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -279,6 +271,11 @@ export default {
       }).addTo(map.value)
       
       console.log('Mapa Leaflet inicializado com sucesso')
+      
+      map.value.on('popupclose', () => {
+        console.log('Popup fechado - resetando mapa para posição inicial')
+        map.value.setView([20, 0], 3)
+      })
     }
 
     const loadData = async () => {
@@ -286,7 +283,6 @@ export default {
       error.value = ''
       
       try {
-        // Buscar dados da OpenAQ API v3 via proxy (resolve CORS)
         const response = await axios.get(`${OPENAQ_CONFIG.BASE_URL}${OPENAQ_CONFIG.ENDPOINTS.LOCATIONS}`, {
           headers: getApiHeaders(),
           params: {
@@ -298,47 +294,40 @@ export default {
           }
         })
 
-        // Se não houver dados válidos, usar dados de exemplo
         if (!response.data.results || response.data.results.length === 0) {
-          console.log('=== USANDO DADOS DE EXEMPLO ===')
+          console.log('=== USING SAMPLE DATA ===')
           stations.value = getSampleData()
           addMarkersToMap()
           loading.value = false
           return
         }
 
-        // Processar dados da API v3
-        console.log('=== DEBUG: Dados brutos da API ===')
-        console.log('Total de resultados:', response.data.results.length)
-        console.log('Primeiro resultado:', response.data.results[0])
+        console.log('=== DEBUG: Raw API data ===')
+        console.log('Total results:', response.data.results.length)
+        console.log('First result:', response.data.results[0])
         
         stations.value = response.data.results.map((location, index) => {
-          console.log(`=== Estação ${index + 1}: ${location.name} ===`)
-          console.log('Localização completa:', location)
+          console.log(`=== Station ${index + 1}: ${location.name} ===`)
+          console.log('Complete location:', location)
           
-          // Verificar se tem coordenadas válidas
           if (!location.coordinates || !location.coordinates.latitude || !location.coordinates.longitude) {
-            console.log('❌ Estação sem coordenadas válidas:', location.name)
+            console.log('❌ Station without valid coordinates:', location.name)
             return null
           }
           
-          // Na API v3, os sensores estão em location.sensors
           const sensors = location.sensors || []
-          console.log('Sensores encontrados:', sensors)
+          console.log('Sensors found:', sensors)
           
-          // Criar objeto com os valores dos parâmetros
           const measurements = {}
           sensors.forEach(sensor => {
             if (sensor.parameter && sensor.parameter.name) {
               const paramName = sensor.parameter.name
               console.log(`Sensor: ${paramName}`)
-              // Para a API v3, precisamos buscar os valores mais recentes
-              // Por enquanto, vamos usar valores simulados baseados no tipo de sensor
               measurements[paramName] = getSimulatedValue(paramName)
             }
           })
           
-          console.log('Medições processadas:', measurements)
+          console.log('Processed measurements:', measurements)
           
           const stationData = {
             id: location.id,
@@ -359,32 +348,30 @@ export default {
             parameters: sensors
           }
           
-          console.log('Dados finais da estação:', stationData)
+          console.log('Final station data:', stationData)
           return stationData
-        }).filter(station => station !== null) // Remover estações sem coordenadas
+        }).filter(station => station !== null)
 
         addMarkersToMap()
       } catch (err) {
         if (err.response?.status === 401) {
-          error.value = 'Erro de autenticação: Verifique sua chave de API OpenAQ'
+          error.value = 'Authentication error: Check your OpenAQ API key'
         } else if (err.response?.status === 410) {
-          error.value = 'API descontinuada: Atualizando para versão mais recente...'
+          error.value = 'API deprecated: Updating to latest version...'
         } else if (err.code === 'ERR_NETWORK' || err.message.includes('CORS')) {
-          error.value = 'Erro de CORS resolvido: Proxy configurado no Vite'
+          error.value = 'CORS error resolved: Proxy configured in Vite'
         } else {
-          error.value = 'Erro ao carregar dados: ' + (err.response?.data?.message || err.message)
+          error.value = 'Error loading data: ' + (err.response?.data?.message || err.message)
         }
-        console.error('Erro na API:', err)
+        console.error('API error:', err)
       } finally {
         loading.value = false
       }
     }
 
     const addMarkersToMap = () => {
-      console.log('=== ADICIONANDO MARCADORES AO MAPA ===')
-      console.log('Total de estações:', stations.value.length)
-      
-      // Limpar marcadores existentes
+      console.log('=== ADDING MARKERS TO MAP ===')
+      console.log('Total stations:', stations.value.length)
       map.value.eachLayer(layer => {
         if (layer instanceof L.Marker) {
           map.value.removeLayer(layer)
@@ -394,22 +381,20 @@ export default {
       let markersAdded = 0
       
       stations.value.forEach((station, index) => {
-        console.log(`Processando estação ${index + 1}:`, station.name)
-        console.log('Coordenadas:', station.coordinates)
+        console.log(`Processing station ${index + 1}:`, station.name)
+        console.log('Coordinates:', station.coordinates)
         
         if (station.coordinates && station.coordinates[0] && station.coordinates[1]) {
           const lat = parseFloat(station.coordinates[0])
           const lng = parseFloat(station.coordinates[1])
           
-          console.log(`Coordenadas válidas: ${lat}, ${lng}`)
+          console.log(`Valid coordinates: ${lat}, ${lng}`)
           
           if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
             const marker = L.marker([lat, lng]).addTo(map.value)
             markersAdded++
             
-            console.log(`✅ Marcador ${markersAdded} adicionado para: ${station.name}`)
-            
-            // Criar popup com informações básicas
+            console.log(`✅ Marker ${markersAdded} added for: ${station.name}`)
             const formatValue = (value) => {
               if (value === null || value === undefined) return 'N/A'
               if (typeof value === 'object') {
@@ -431,32 +416,24 @@ export default {
                 ${station.pm10 ? `<p style="margin: 5px 0;"><strong>PM10:</strong> ${formatValue(station.pm10)} μg/m³</p>` : ''}
                 ${station.o3 ? `<p style="margin: 5px 0;"><strong>O₃:</strong> ${formatValue(station.o3)} μg/m³</p>` : ''}
                 ${station.no2 ? `<p style="margin: 5px 0;"><strong>NO₂:</strong> ${formatValue(station.no2)} μg/m³</p>` : ''}
-                <button onclick="window.selectStation('${station.id}')" 
-                        style="background: #00d4ff; color: white; border: none; padding: 8px 16px; 
-                               border-radius: 5px; cursor: pointer; margin-top: 10px;">
-                  Ver Detalhes
-                </button>
               </div>
             `
             
             marker.bindPopup(popupContent)
             
-            // Adicionar evento de clique
             marker.on('click', () => {
-              console.log(`Clique no marcador: ${station.name}`)
+              console.log(`Marker clicked: ${station.name}`)
               selectStation(station.id)
             })
           } else {
-            console.log(`❌ Coordenadas inválidas para: ${station.name}`)
+            console.log(`❌ Invalid coordinates for: ${station.name}`)
           }
         } else {
-          console.log(`❌ Estação sem coordenadas: ${station.name}`)
+          console.log(`❌ Station without coordinates: ${station.name}`)
         }
       })
       
-      console.log(`✅ Total de marcadores adicionados: ${markersAdded}`)
-      
-      // Ajustar visualização do mapa se houver marcadores
+      console.log(`✅ Total markers added: ${markersAdded}`)
       if (markersAdded > 0) {
         const group = new L.featureGroup()
         stations.value.forEach(station => {
@@ -489,25 +466,25 @@ export default {
             }
           }, 500)
           
-          console.log('Mapa ajustado para mostrar todos os marcadores')
+          console.log('Map adjusted to show all markers')
         }
       }
     }
 
     const selectStation = (stationId) => {
-      console.log('=== DEBUG: Selecionando estação ===')
-      console.log('ID recebido:', stationId)
-      console.log('Tipo do ID:', typeof stationId)
-      console.log('Total de estações:', stations.value.length)
+      console.log('=== DEBUG: Selecting station ===')
+      console.log('Received ID:', stationId)
+      console.log('ID type:', typeof stationId)
+      console.log('Total stations:', stations.value.length)
       
       selectedStation.value = stations.value.find(s => {
-        console.log(`Comparando: ${s.id} (${typeof s.id}) com ${stationId} (${typeof stationId})`)
+        console.log(`Comparing: ${s.id} (${typeof s.id}) with ${stationId} (${typeof stationId})`)
         return s.id == stationId
       })
       
       if (selectedStation.value) {
-        console.log('Estação encontrada:', selectedStation.value)
-        console.log('Dados da estação:', {
+        console.log('Station found:', selectedStation.value)
+        console.log('Station data:', {
           name: selectedStation.value.name,
           pm25: selectedStation.value.pm25,
           pm10: selectedStation.value.pm10,
@@ -521,25 +498,24 @@ export default {
           duration: 1
         })
       } else {
-        console.log('Estação não encontrada!')
-        console.log('IDs disponíveis:', stations.value.map(s => s.id))
+        console.log('Station not found!')
+        console.log('Available IDs:', stations.value.map(s => s.id))
       }
     }
 
     const formatDate = (dateString) => {
       if (!dateString) return 'N/A'
-      return new Date(dateString).toLocaleDateString('pt-BR')
+      return new Date(dateString).toLocaleDateString('en-US')
     }
 
     const formatTime = (dateString) => {
       if (!dateString) return 'N/A'
-      return new Date(dateString).toLocaleTimeString('pt-BR')
+      return new Date(dateString).toLocaleTimeString('en-US')
     }
 
     const formatDataValue = (value) => {
       if (value === null || value === undefined) return 'N/A'
       if (typeof value === 'object') {
-        // Se for um objeto, tentar extrair propriedades úteis
         if (value.name) return value.name
         if (value.code) return value.code
         return JSON.stringify(value)
@@ -570,11 +546,12 @@ export default {
       const diffHours = Math.floor(diffMins / 60)
       const diffDays = Math.floor(diffHours / 24)
 
-      if (diffMins < 60) return `${diffMins} minutos atrás`
-      if (diffHours < 24) return `${diffHours} horas atrás`
-      return `${diffDays} dias atrás`
+      if (diffMins < 60) return `${diffMins} minutes ago`
+      if (diffHours < 24) return `${diffHours} hours ago`
+      return `${diffDays} days ago`
     }
 
+    // AI-powered air quality classification
     const getAirQualityStatus = (parameter, value) => {
       if (!value || typeof value !== 'number') return 'unknown'
       
@@ -606,22 +583,11 @@ export default {
         hazardous: 'Perigosa',
         unknown: 'Desconhecida'
       }
-      return labels[status] || 'Desconhecida'
-    }
-
-
-    const getCurrentTime = () => {
-      return new Date().toLocaleTimeString('pt-BR', { 
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
+      return labels[status] || 'Unknown'
     }
 
 
     const getSimulatedValue = (parameter) => {
-      // Gerar valores simulados baseados no tipo de parâmetro
       const ranges = {
         pm25: { min: 5, max: 50 },
         pm10: { min: 10, max: 80 },
@@ -636,13 +602,13 @@ export default {
     }
 
     const getSampleData = () => {
-      console.log('=== GERANDO DADOS DE EXEMPLO ===')
+      console.log('=== GENERATING SAMPLE DATA ===')
       return [
         {
           id: 1,
-          name: 'São Paulo - Centro',
+          name: 'São Paulo - Center',
           city: 'São Paulo',
-          country: 'Brasil',
+          country: 'Brazil',
           coordinates: [-23.5505, -46.6333],
           pm25: 18.5,
           pm10: 32.1,
@@ -665,7 +631,7 @@ export default {
           id: 2,
           name: 'Rio de Janeiro - Copacabana',
           city: 'Rio de Janeiro',
-          country: 'Brasil',
+          country: 'Brazil',
           coordinates: [-22.9711, -43.1822],
           pm25: 15.2,
           pm10: 28.7,
@@ -711,7 +677,7 @@ export default {
           id: 4,
           name: 'Mexico City - Centro',
           city: 'Mexico City',
-          country: 'México',
+          country: 'Mexico',
           coordinates: [19.4326, -99.1332],
           pm25: 28.7,
           pm10: 42.3,
@@ -772,7 +738,6 @@ export default {
       sendMessage(message)
     }
 
-    // Expor função globalmente para uso nos popups
     window.selectStation = selectStation
 
     onMounted(() => {
@@ -795,8 +760,6 @@ export default {
       getTimeAgo,
       getAirQualityStatus,
       getAirQualityLabel,
-      getCurrentTime,
-      // Chatbot
       isChatOpen,
       chatMessages,
       isTyping,
